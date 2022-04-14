@@ -6,6 +6,19 @@ const GithubReducer = (state, action) => {
             isLoading: false
         }
     }
+    if(action.type === 'START_LOADING'){
+        return {
+            ...state,
+            isLoading: true
+        }
+    }
+
+    if(action.type === 'CLEAR_USERS'){
+        return {
+            ...state,
+            users: []
+        }
+    }
     return state;
 }
 

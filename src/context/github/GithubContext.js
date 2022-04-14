@@ -6,32 +6,42 @@ const GITHUB_URL = process.env.REACT_APP_GITHUB_URL;
 
 const GithubContext = createContext({
     users: [],
-    isLoading: true,
-    fetchUsers: () => {}
+    isLoading: false,
+    fetchUsers: () => {},
+    resetAllUsers: () => {}
 });
 
 export const GithubProvider = ({children}) => {
     const initialState = {
         users: [],
-        isLoading: true
+        isLoading: false
     }
 
     const [state, dispatch] = useReducer(GithubReducer, initialState);
 
-    const fetchUsers = useCallback(async () => {
-        const response = await fetch(GITHUB_URL + '/users', {
+    
+    const fetchUsers = useCallback(async (text) => {
+        const queryParams = new URLSearchParams({
+            q: text
+        });
+        dispatch({type: 'START_LOADING'});
+        const response = await fetch(`${GITHUB_URL}/search/users?${queryParams}`, {
             Authorization: `token ${GITHUB_TOKEN}`
         });
         
-        const data = await response.json();
-        const users = data.map(({id, login, avatar_url}) => {return{login,id, avatar_url}});
+        const {items} = await response.json();
+        const users = items.map(({id, login, avatar_url}) => {return{login,id, avatar_url}});
         dispatch({
             type: 'GET_USERS',
             payload: users
         });
     }, [])
 
-    return <GithubContext.Provider value={{users: state.users,isLoading: state.isLoading, fetchUsers}}>{children}</GithubContext.Provider>
+    const resetAllUsers = () => {
+        dispatch({type: 'CLEAR_USERS'});
+    }
+
+    return <GithubContext.Provider value={{users: state.users,isLoading: state.isLoading, fetchUsers, resetAllUsers}}>{children}</GithubContext.Provider>
 }
 
 export default GithubContext;
