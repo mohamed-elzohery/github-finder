@@ -1,17 +1,22 @@
-import { createContext, useState, useCallback } from "react";
+import { createContext, useReducer, useCallback } from "react";
+import GithubReducer from './GithubReducer';
 
 const GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
 const GITHUB_URL = process.env.REACT_APP_GITHUB_URL;
 
 const GithubContext = createContext({
     users: [],
-    isLoading: false,
+    isLoading: true,
     fetchUsers: () => {}
 });
 
 export const GithubProvider = ({children}) => {
-    const [users, setUsers] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const initialState = {
+        users: [],
+        isLoading: true
+    }
+
+    const [state, dispatch] = useReducer(GithubReducer, initialState);
 
     const fetchUsers = useCallback(async () => {
         const response = await fetch(GITHUB_URL + '/users', {
@@ -19,11 +24,14 @@ export const GithubProvider = ({children}) => {
         });
         
         const data = await response.json();
-        setUsers(data.map(({id, login, avatar_url}) => {return{login,id, avatar_url}}));
-        setIsLoading(false);
+        const users = data.map(({id, login, avatar_url}) => {return{login,id, avatar_url}});
+        dispatch({
+            type: 'GET_USERS',
+            payload: users
+        });
     }, [])
 
-    return <GithubContext.Provider value={{users, isLoading, fetchUsers}}>{children}</GithubContext.Provider>
+    return <GithubContext.Provider value={{users: state.users,isLoading: state.isLoading, fetchUsers}}>{children}</GithubContext.Provider>
 }
 
 export default GithubContext;
