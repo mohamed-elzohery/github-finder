@@ -8,7 +8,7 @@ const GITHUB_URL = process.env.REACT_APP_GITHUB_URL;
 const GithubContext = createContext({
     users: [],
     isLoading: false,
-    user: null,
+    user: {},
     fetchUsers: () => {},
     resetAllUsers: () => {},
     fetchUser: () => {}
@@ -17,7 +17,7 @@ const GithubContext = createContext({
 export const GithubProvider = ({children}) => {
     const initialState = {
         users: [],
-        user: null,
+        user: {},
         isLoading: false
     }
 
