@@ -1,8 +1,11 @@
 import React, { useState, useContext } from 'react';
 import GithubContext from '../../context/github/GithubContext';
+import AlertContext from '../../context/alert/AlertContext';
 
 const UserSearch = (props) => {
     const {users, fetchUsers, resetAllUsers} = useContext(GithubContext);
+    const {setAlert} = useContext(AlertContext);
+
     const [enteredVal, setVal] = useState('');
 
     const onChangeHandler = (e => setVal(e.target.value));
@@ -14,7 +17,8 @@ const UserSearch = (props) => {
         e.preventDefault();
         if(enteredVal.trim() !== ''){
             fetchUsers(enteredVal);
-            return;
+        }else{
+            setAlert('Please Enter Somthing!', 'error');
         }
     };
     return <div className='grid grid-cols-1 md:grid-cols-2 mb-8 gap-8'>

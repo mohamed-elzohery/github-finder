@@ -11,7 +11,7 @@ const UserItem = ({user: {login, avatar_url}}) => {
                 </div>
             <div className='ml-4'>
                 <h1 className='card-title'>{login}</h1>
-                <Link className='text-base-content text-opacity-40' to={`/users/${login}`}>Visit profile</Link>
+                <Link className='text-base-content text-opacity-40' to={`/user/${login}`}>Visit profile</Link>
             </div>
             </div>
         </div>
