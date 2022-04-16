@@ -9,15 +9,18 @@ const GithubContext = createContext({
     users: [],
     isLoading: false,
     user: {},
+    repos: [],
     fetchUsers: () => {},
     resetAllUsers: () => {},
-    fetchUser: () => {}
+    fetchUser: () => {},
+    fetchRepos: () => {}
 });
 
 export const GithubProvider = ({children}) => {
     const initialState = {
         users: [],
         user: {},
+        repos: [],
         isLoading: false
     }
 
@@ -56,10 +59,28 @@ export const GithubProvider = ({children}) => {
             });
 
         }else{
-            dispatch({type: 'END_LOADING'});
+            // dispatch({type: 'END_LOADING'});
             navigate('/notfound');
         }
-    }, [navigate])
+    }, [navigate]);
+
+    const fetchRepos = useCallback(async (login) => {
+        dispatch({type: 'START_LOADING'});
+        const response = await fetch(`${GITHUB_URL}/users/${login}/repos`, {
+            Authorization: `token ${GITHUB_TOKEN}`
+        });
+
+        if(response.ok){
+            const repos = await response.json();
+            dispatch({
+                type: 'GET_REPOS',
+                payload: repos
+            });
+
+        }else{
+            // navigate('/notfound');
+        }
+    }, [])
 
     const resetAllUsers = () => {
         dispatch({type: 'CLEAR_USERS'});
@@ -69,8 +90,10 @@ export const GithubProvider = ({children}) => {
         isLoading: state.isLoading, 
         fetchUsers,
         resetAllUsers,
+        fetchUser,
+        repos: state.repos,
         user: state.user,
-        fetchUser}}>{children}</GithubContext.Provider>
+        fetchRepos}}>{children}</GithubContext.Provider>
 }
 
 export default GithubContext;

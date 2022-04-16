@@ -1,12 +1,13 @@
 import React, { useContext, useEffect } from 'react';
 import {FaArrowLeft, FaUserFriends, FaUsers, FaCodepen, FaStore} from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
+import ReposList from '../components/repos/ReposList';
 import GithubContext from '../context/github/GithubContext';
 import Spinner from '../UI/Spinner';
 
 const Profile = () => {
     const {login} = useParams();
-    const {fetchUser, user, isLoading} = useContext(GithubContext);
+    const {fetchUser, user, isLoading, repos, fetchRepos} = useContext(GithubContext);
     console.log(user)
         const {
             bio,
@@ -26,7 +27,8 @@ const Profile = () => {
 
     useEffect(() => {
         fetchUser(login);
-    }, [fetchUser])
+        fetchRepos(login);
+    }, [fetchUser, fetchRepos,login])
 
     if(isLoading) return <Spinner />;
 
@@ -49,7 +51,7 @@ const Profile = () => {
                     {hireable && <div className='badge badge-warning ml-4 badge-lg'>Hireable</div>}
                 </div>
                 <p className='text-2xl mt-9'>{bio}</p>
-                <a href={html_url} target='_blank' className='btn btn-secondary mt-6'>Visit GitHub Profile</a>
+                <a href={html_url} target="_blank" rel='noreferrer' className='btn btn-secondary mt-6'>Visit GitHub Profile</a>
                 <div className='mt-12 p-3 rounded shadow-lg flex'>
                 {location && <div className="stat">
                     <div className="stat-title">Location</div>
@@ -57,14 +59,14 @@ const Profile = () => {
                 </div>}
                 {blog && <div className="stat">
                     <div className="stat-title">Blog</div>
-                    <div className=" text-2xl font-bold text-secondary"><a href={`https://${blog}`} target="_blank" rel='no-refferer'>
+                    <div className=" text-2xl font-bold text-secondary"><a href={`https://${blog}`} target="_blank" rel='noreferrer'>
                                 {blog}
                             </a></div>
                 </div>}
                 {twitter && <div className="stat">
                     <div className="stat-title">Twitter</div>
                     <div className="text-2xl font-bold text-secondary">
-                            <a href={`https://${twitter}`}>
+                            <a href={`https://${twitter}`} target="_blank" rel='noreferrer'>
                                 {twitter}
                             </a>
                         </div>
@@ -96,6 +98,8 @@ const Profile = () => {
                     <div className=" text-2xl font-bold text-secondary">{public_repos}</div>
         </div>
         </div>
+
+        <ReposList repos={repos} />
     </div>)
 }
 

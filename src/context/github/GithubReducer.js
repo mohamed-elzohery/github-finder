@@ -35,6 +35,14 @@ const GithubReducer = (state, action) => {
             isLoading: false
         }
     }
+
+    if(action.type === 'GET_REPOS'){
+        return {
+            ...state,
+            repos: action.payload,
+            isLoading: false
+        }
+    }
     return state;
 }
 
