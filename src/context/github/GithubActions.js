@@ -7,7 +7,7 @@ const GITHUB_URL = process.env.REACT_APP_GITHUB_URL;
 const github = axios.create({
     baseURL:  GITHUB_URL,
     headers:{
-        Authorization: `token ${GITHUB_TOKEN}`
+        Authorization: GITHUB_TOKEN
     }
 })
 
