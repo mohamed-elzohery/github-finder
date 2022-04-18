@@ -28,21 +28,16 @@ const GithubReducer = (state, action) => {
         }
     }
 
-    if(action.type === 'GET_USER'){
+    if(action.type === 'GET_USER_DATA'){
         return {
             ...state,
-            user: action.payload,
+            user: action.payload.user,
+            repos: action.payload.repos,
             isLoading: false
         }
     }
 
-    if(action.type === 'GET_REPOS'){
-        return {
-            ...state,
-            repos: action.payload,
-            isLoading: false
-        }
-    }
+    
     return state;
 }
 

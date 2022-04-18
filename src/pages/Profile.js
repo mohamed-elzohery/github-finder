@@ -1,14 +1,23 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useCallback } from 'react';
 import {FaArrowLeft, FaUserFriends, FaUsers, FaCodepen, FaStore} from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import ReposList from '../components/repos/ReposList';
 import GithubContext from '../context/github/GithubContext';
 import Spinner from '../UI/Spinner';
+import {fetchUserData} from '../context/github/GithubActions'
 
 const Profile = () => {
     const {login} = useParams();
-    const {fetchUser, user, isLoading, repos, fetchRepos} = useContext(GithubContext);
-    console.log(user)
+    const {user, isLoading, repos, dispatch} = useContext(GithubContext);
+    console.log(user);
+
+
+        const fetchPageData = useCallback(async () => {
+            dispatch({type: 'START_LOADING'});
+            const userData = await fetchUserData(login);
+            dispatch({type: 'GET_USER_DATA', payload: userData});
+        }, [dispatch, login]);
+        
         const {
             bio,
             avatar_url,
@@ -26,9 +35,9 @@ const Profile = () => {
         } = user;
 
     useEffect(() => {
-        fetchUser(login);
-        fetchRepos(login);
-    }, [fetchUser, fetchRepos,login])
+        fetchPageData();
+    }, [fetchPageData])
+
 
     if(isLoading) return <Spinner />;
 

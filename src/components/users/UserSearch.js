@@ -1,22 +1,26 @@
 import React, { useState, useContext } from 'react';
 import GithubContext from '../../context/github/GithubContext';
 import AlertContext from '../../context/alert/AlertContext';
+import { fetchUsers } from '../../context/github/GithubActions';
 
 const UserSearch = (props) => {
-    const {users, fetchUsers, resetAllUsers} = useContext(GithubContext);
+    const {users, dispatch} = useContext(GithubContext);
     const {setAlert} = useContext(AlertContext);
 
     const [enteredVal, setVal] = useState('');
 
     const onChangeHandler = (e => setVal(e.target.value));
     const onResetHandler = () => {
-        resetAllUsers();
+        dispatch({type: 'CLEAR_USERS'});
         setVal('');
     };
-    const onSumbitHandler = e => {
+    const onSumbitHandler = async (e) => {
         e.preventDefault();
         if(enteredVal.trim() !== ''){
-            fetchUsers(enteredVal);
+            dispatch({type: 'START_LOADING'});
+            const users = await fetchUsers(enteredVal);
+            dispatch({type: 'GET_USERS', payload: users});
+            setVal('');
         }else{
             setAlert('Please Enter Somthing!', 'error');
         }
